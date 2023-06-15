@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "org.karn.koreanchat.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "PlayerConnect"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

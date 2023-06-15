@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "koreanchat",
+  "version": "${version}",
+  "name": "koreanChat",
+  "description": "",
+  "authors": [],
+  "contact": {
+    "repo": "https://github.com/Admin/KoreanChat"
+  },
+  "license": "All-Rights-Reserved",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "org.karn.koreanchat.KoreanChat"
+    ]
+  },
+  "mixins": [
+    "KoreanChat.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": ">=1.19"
+  }
+}
