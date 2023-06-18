@@ -1,10 +1,14 @@
 package org.karn.koreanchat.util;
 
+import eu.pb4.styledchat.StyledChatEvents;
+import net.fabricmc.loader.api.FabricLoader;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class ExceptionStringUtil {
     private final static KoreanConvertorUtil englishToKorean = new KoreanConvertorUtil();
+    public static final boolean STYLED_CHAT = FabricLoader.getInstance().isModLoaded("styledchat");
 
     public static String getString(String string){
         int index = -1;

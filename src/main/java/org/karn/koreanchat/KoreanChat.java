@@ -16,6 +16,11 @@ public class KoreanChat implements ModInitializer {
         CommandRegistrationCallback.EVENT.register((dispatcher, commandRegistryAccess, ignored1) -> {
             ChatToggle.register(dispatcher);
         });
+
+        ServerMessageDecoratorEvent.EVENT.register(ServerMessageDecoratorEvent.CONTENT_PHASE, (sender, message) -> {
+            Text replaced = message.copy().append(" :)");
+            return CompletableFuture.completedFuture(replaced);
+        });
     }
 
 }

@@ -8,6 +8,7 @@ group = project.maven_group
 
 repositories {
     maven { url 'https://maven.nucleoid.xyz' }
+    maven { url "https://api.modrinth.com/maven" }
     // Add repositories to retrieve artifacts from in here.
     // You should only use this when depending on other mods because
     // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
@@ -23,7 +24,9 @@ dependencies {
 
         // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    modImplementation include("eu.pb4:placeholder-api:2.1.0+1.19.4")
     modImplementation include("eu.pb4:player-data-api:${project.player_data_api_version}")
+    modCompileOnly "maven.modrinth:styled-chat:${project.styled_chat_version}"
     }
 
 processResources {
