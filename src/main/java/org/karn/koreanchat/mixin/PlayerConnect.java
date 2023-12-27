@@ -4,6 +4,7 @@ import eu.pb4.playerdata.api.PlayerDataApi;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
+import net.minecraft.server.network.ConnectedClientData;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -24,7 +25,7 @@ public class PlayerConnect {
     private MinecraftServer server;
 
     @Inject(method = "onPlayerConnect", at = @At(value = "TAIL", target = "Lnet/minecraft/server/network/ServerPlayerEntity;onSpawn()V"))
-    private void ChatEnableOnJoin(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
+    private void ChatEnableOnJoin(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
         KoreanChatData data = PlayerDataApi.getCustomDataFor(player, KRC_DATA);
         if(data == null) {
             data = new KoreanChatData();

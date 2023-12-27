@@ -1,6 +1,6 @@
 package org.karn.koreanchat.mixin;
 
-import org.karn.koreanchat.util.ExceptionStringUtil;
+import org.karn.koreanchat.util.ChatConversion;
 import org.karn.koreanchat.util.KoreanChatData;
 import org.karn.koreanchat.util.KoreanChatManager;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,7 +29,7 @@ public class ServerPlayNetworkHandlerMixin {
         String chatMessage = packet.chatMessage();
 
         if (data.krc) {
-            chatMessage = ExceptionStringUtil.getString(chatMessage);
+            chatMessage = ChatConversion.convertChat(chatMessage);
         }
         MessageBody messageBody = new MessageBody(chatMessage, packet.timestamp(), packet.salt(), lastSeenMessages);
         cir.setReturnValue(this.messageUnpacker.unpack(packet.signature(), messageBody));

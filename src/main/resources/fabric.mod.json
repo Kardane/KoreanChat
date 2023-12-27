@@ -20,7 +20,7 @@
     "KoreanChat.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=${loader_version}",
+    "fabricloader": "*",
     "fabric": "*",
     "minecraft": ">=1.19"
   }
