@@ -24,7 +24,7 @@ public class PlayerConnect {
     @Final
     private MinecraftServer server;
 
-    @Inject(method = "onPlayerConnect", at = @At(value = "TAIL", target = "Lnet/minecraft/server/network/ServerPlayerEntity;onSpawn()V"))
+    @Inject(method = "onPlayerConnect", at = @At("TAIL"))
     private void ChatEnableOnJoin(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
         KoreanChatData data = PlayerDataApi.getCustomDataFor(player, KRC_DATA);
         if(data == null) {
