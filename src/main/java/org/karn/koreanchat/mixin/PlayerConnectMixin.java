@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static org.karn.koreanchat.util.KoreanChatManager.KRC_DATA;
 
 @Mixin(PlayerManager.class)
-public class PlayerConnect {
+public class PlayerConnectMixin {
     @Shadow
     @Final
     private MinecraftServer server;
