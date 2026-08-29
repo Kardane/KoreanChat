@@ -3,10 +3,10 @@ package org.karn.koreanchat.util;
 import eu.pb4.playerdata.api.PlayerDataApi;
 import eu.pb4.playerdata.api.storage.JsonDataStorage;
 import eu.pb4.playerdata.api.storage.PlayerDataStorage;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.UUID;
 
@@ -18,10 +18,10 @@ public class KoreanChatManager {
         KoreanChatData data = PlayerDataApi.getCustomDataFor(server, uuid, KRC_DATA);
         return data != null && data.krc;
     }
-    public static boolean setKoreanChat(ServerPlayerEntity player, boolean toggle) {
+    public static boolean setKoreanChat(ServerPlayer player, boolean toggle) {
         KoreanChatData data = PlayerDataApi.getCustomDataFor(player, KRC_DATA);
-        if (isKoreanChatEnabled(player.getServer(), player.getUuid()) == toggle) {
-            player.sendMessageToClient(Text.literal("[알림] 한글채팅이 이미 켜져 있거나 꺼져 있습니다!").formatted(Formatting.RED),false);
+        if (isKoreanChatEnabled(player.level().getServer(), player.getUUID()) == toggle) {
+            player.sendSystemMessage(Component.literal("[알림] 한글채팅이 이미 켜져 있거나 꺼져 있습니다!").withStyle(ChatFormatting.RED),false);
             return false;
         }
 
@@ -37,17 +37,17 @@ public class KoreanChatManager {
         return true;
     }
 
-    public static void ChatEnable(ServerPlayerEntity player) {
+    public static void ChatEnable(ServerPlayer player) {
         KoreanChatData data = PlayerDataApi.getCustomDataFor(player, KRC_DATA);
         data.krc = true;
         PlayerDataApi.setCustomDataFor(player, KRC_DATA, data);
-        player.sendMessageToClient(Text.literal("[알림] 한글채팅이 활성화 되었습니다. /krc로 off로 한글채팅을 끌 수 있습니다.").formatted(Formatting.GREEN),false);
+        player.sendSystemMessage(Component.literal("[알림] 한글채팅이 활성화 되었습니다. /krc로 off로 한글채팅을 끌 수 있습니다.").withStyle(ChatFormatting.GREEN),false);
     }
 
-    public static void ChatDisable(ServerPlayerEntity player) {
+    public static void ChatDisable(ServerPlayer player) {
         KoreanChatData data = PlayerDataApi.getCustomDataFor(player, KRC_DATA);
         data.krc = false;
         PlayerDataApi.setCustomDataFor(player, KRC_DATA, data);
-        player.sendMessageToClient(Text.literal("[알림] 한글채팅이 비활성화 되었습니다. /krc on으로 한글채팅을 켤 수 있습니다.").formatted(Formatting.GREEN),false);
+        player.sendSystemMessage(Component.literal("[알림] 한글채팅이 비활성화 되었습니다. /krc on으로 한글채팅을 켤 수 있습니다.").withStyle(ChatFormatting.GREEN),false);
     }
 }
