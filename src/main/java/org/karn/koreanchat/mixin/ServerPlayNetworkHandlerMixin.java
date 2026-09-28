@@ -32,6 +32,6 @@ public class ServerPlayNetworkHandlerMixin {
             chatMessage = ChatConversion.convertChat(chatMessage);
         }
         SignedMessageBody messageBody = new SignedMessageBody(chatMessage, packet.timeStamp(), packet.salt(), lastSeenMessages);
-        cir.setReturnValue(this.signedMessageDecoder.unpack(packet.signature(), messageBody));
+        cir.setReturnValue(this.signedMessageDecoder.unpack(packet.signature().orElse(null), messageBody));
     }
 }
