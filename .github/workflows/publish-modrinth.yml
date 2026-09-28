@@ -3,13 +3,14 @@ name: Publish Modrinth release
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
   publish:
-    if: github.event.release.tag_name == '1.7'
+    if: github.event_name == 'workflow_dispatch' || github.event.release.tag_name == '1.7'
     runs-on: ubuntu-latest
     steps:
       - name: Upload the GitHub release JAR to Modrinth
@@ -22,7 +23,7 @@ jobs:
           test -n "$MODRINTH_TOKEN"
 
           jar=KoreanChat-1.7.jar
-          gh release download "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --pattern "$jar" --dir .
+          gh release download 1.7 --repo "$GITHUB_REPOSITORY" --pattern "$jar" --dir .
           unzip -p "$jar" fabric.mod.json | jq -e '.version == "1.7" and .depends.minecraft == "~26.3"' >/dev/null
 
           existing=$(curl --fail --silent --show-error \
@@ -35,10 +36,15 @@ jobs:
           fi
 
           data=$(jq -nc '{name:"KoreanChat 1.7",version_number:"1.7",version_type:"release",changelog:"Updated for Minecraft 26.3.",game_versions:["26.3"],loaders:["fabric"],project_id:"b6DSxiIM",file_parts:["file"],primary_file:"file",environment:"server_only",status:"listed"}')
-          curl --fail-with-body --silent --show-error \
+          response=$(mktemp)
+          status=$(curl --silent --show-error --output "$response" --write-out '%{http_code}' \
             -H "Authorization: $MODRINTH_TOKEN" \
             -H 'User-Agent: KoreanChat-release-workflow/1.0' \
             --form-string "data=$data" \
             -F "file=@$jar;type=application/java-archive" \
-            'https://api.modrinth.com/v2/version' \
-            | jq -r '"Published Modrinth version: \(.id) (\(.version_number))"'
+            'https://api.modrinth.com/v2/version')
+          if [[ "$status" != 200 ]]; then
+            jq -c '{error,description}' "$response"
+            exit 1
+          fi
+          jq -r '"Published Modrinth version: \(.id) (\(.version_number))"' "$response"
