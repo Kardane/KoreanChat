@@ -35,7 +35,7 @@ jobs:
             exit 0
           fi
 
-          data=$(jq -nc '{name:"KoreanChat 1.7",version_number:"1.7",version_type:"release",changelog:"Updated for Minecraft 26.3.",game_versions:["26.3"],loaders:["fabric"],project_id:"b6DSxiIM",file_parts:["file"],primary_file:"file",environment:"server_only",status:"listed"}')
+          data=$(jq -nc '{name:"KoreanChat 1.7",version_number:"1.7",version_type:"release",changelog:"Updated for Minecraft 26.3.",dependencies:[],game_versions:["26.3"],loaders:["fabric"],featured:false,project_id:"b6DSxiIM",file_parts:["file"],primary_file:"file",environment:"server_only",status:"listed",requested_status:"listed"}')
           response=$(mktemp)
           status=$(curl --silent --show-error --output "$response" --write-out '%{http_code}' \
             -H "Authorization: $MODRINTH_TOKEN" \
