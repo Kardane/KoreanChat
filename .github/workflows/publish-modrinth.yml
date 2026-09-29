@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   publish:
-    if: github.event_name == 'workflow_dispatch' || github.event.release.tag_name == '1.7'
+    if: github.event_name == 'workflow_dispatch' || github.event.release.tag_name == '1.8'
     runs-on: ubuntu-latest
     steps:
       - name: Upload the GitHub release JAR to Modrinth
@@ -22,29 +22,33 @@ jobs:
           set -euo pipefail
           test -n "$MODRINTH_TOKEN"
 
-          jar=KoreanChat-1.7.jar
-          gh release download 1.7 --repo "$GITHUB_REPOSITORY" --pattern "$jar" --dir .
-          unzip -p "$jar" fabric.mod.json | jq -e '.version == "1.7" and .depends.minecraft == "~26.3"' >/dev/null
+          gh release download 1.8 --repo "$GITHUB_REPOSITORY" --pattern 'KoreanChat*.jar' --dir .
+          unzip -p KoreanChat-1.8.jar fabric.mod.json | jq -e '.version == "1.8" and .depends.minecraft == "~26.3"' >/dev/null
+          unzip -p KoreanChat-neoforge-1.8.jar META-INF/neoforge.mods.toml | grep -q 'version="1.8"'
 
-          existing=$(curl --fail --silent --show-error \
-            -H 'User-Agent: KoreanChat-release-workflow/1.0' \
-            'https://api.modrinth.com/v2/project/b6DSxiIM/version' \
-            | jq -r '.[] | select(.version_number == "1.7") | .id')
-          if [[ -n "$existing" ]]; then
-            echo "Modrinth version 1.7 already exists: $existing"
-            exit 0
-          fi
-
-          data=$(jq -nc '{name:"KoreanChat 1.7",version_number:"1.7",version_type:"release",changelog:"Updated for Minecraft 26.3.",dependencies:[],game_versions:["26.3"],loaders:["fabric"],featured:false,project_id:"b6DSxiIM",file_parts:["file"],primary_file:"file",environment:"server_only",status:"listed",requested_status:"listed"}')
-          response=$(mktemp)
-          status=$(curl --silent --show-error --output "$response" --write-out '%{http_code}' \
-            -H "Authorization: $MODRINTH_TOKEN" \
-            -H 'User-Agent: KoreanChat-release-workflow/1.0' \
-            --form-string "data=$data" \
-            -F "file=@$jar;type=application/java-archive" \
-            'https://api.modrinth.com/v2/version')
-          if [[ "$status" != 200 ]]; then
-            jq -c '{error,description}' "$response"
-            exit 1
-          fi
-          jq -r '"Published Modrinth version: \(.id) (\(.version_number))"' "$response"
+          for loader in fabric neoforge; do
+            version="1.8-$loader"
+            if [[ "$loader" == fabric ]]; then jar=KoreanChat-1.8.jar; else jar=KoreanChat-neoforge-1.8.jar; fi
+            existing=$(curl --fail --silent --show-error \
+              -H 'User-Agent: KoreanChat-release-workflow/1.0' \
+              'https://api.modrinth.com/v2/project/b6DSxiIM/version' \
+              | jq -r --arg version "$version" '.[] | select(.version_number == $version) | .id')
+            if [[ -n "$existing" ]]; then
+              echo "Modrinth version $version already exists: $existing"
+              continue
+            fi
+            data=$(jq -nc --arg loader "$loader" --arg version "$version" \
+              '{name:("KoreanChat 1.8 ("+$loader+")"),version_number:$version,version_type:"release",changelog:"Minecraft 26.3 support.",dependencies:[],game_versions:["26.3"],loaders:[$loader],featured:false,project_id:"b6DSxiIM",file_parts:["file"],primary_file:"file",environment:"server_only",status:"listed",requested_status:"listed"}')
+            response=$(mktemp)
+            status=$(curl --silent --show-error --output "$response" --write-out '%{http_code}' \
+              -H "Authorization: $MODRINTH_TOKEN" \
+              -H 'User-Agent: KoreanChat-release-workflow/1.0' \
+              --form-string "data=$data" \
+              -F "file=@$jar;type=application/java-archive" \
+              'https://api.modrinth.com/v2/version')
+            if [[ "$status" != 200 ]]; then
+              jq -c '{error,description}' "$response"
+              exit 1
+            fi
+            jq -r '"Published Modrinth version: \(.id) (\(.version_number))"' "$response"
+          done

@@ -1,0 +1,24 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+license="All Rights Reserved"
+
+[[mods]]
+modId="koreanchat"
+version="${mod_version}"
+displayName="KoreanChat"
+displayTest="IGNORE_SERVER_VERSION"
+description='''Server-side Korean chat conversion with /krc on and /krc off.'''
+
+[[dependencies.koreanchat]]
+modId="neoforge"
+type="required"
+versionRange="[${neo_version},)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.koreanchat]]
+modId="minecraft"
+type="required"
+versionRange="[26.3]"
+ordering="NONE"
+side="BOTH"
